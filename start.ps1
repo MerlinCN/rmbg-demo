@@ -5,4 +5,4 @@ if (-not $env:HF_TOKEN) {
 }
 
 # 启动主程序
-docker run --gpus all -d -p 7788:7788 --env HF_TOKEN=$env:HF_TOKEN --name rmbg rmbg:latest
+docker run --gpus all -d -p 7788:7788 --env HF_TOKEN=$env:HF_TOKEN -v ${PWD}/model:/app/model --name rmbg rmbg:latest
