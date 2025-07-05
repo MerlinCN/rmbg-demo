@@ -17,6 +17,7 @@ from torch import Tensor
 from torchvision import transforms
 from transformers import AutoModelForImageSegmentation
 import numpy as np
+import time
 
 # 类型别名定义
 DeviceType = Literal["cuda", "cpu"]
@@ -158,12 +159,13 @@ def process_image(
         else:
             return None, f"不支持的图像格式: {type(input_image)}"
 
+        start_time = time.time()
         # 调用背景移除函数
         result: Image.Image = remove_background(
             image, confidence_threshold, device_choice
         )
 
-        return result, "背景移除完成"
+        return result, f"背景移除完成，耗时{time.time() - start_time:.2f}秒"
 
     except Exception as e:
         return None, f"处理过程中出现错误: {str(e)}"
