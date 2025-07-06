@@ -24,8 +24,13 @@ DeviceType = Literal["cuda", "cpu"]
 ImageInputType = Union[Image.Image, np.ndarray, None]
 ProcessResultType = Tuple[Optional[Image.Image], str]
 
-model: Optional[AutoModelForImageSegmentation] = None  # 全局模型变量
-model_device: Optional[str] = None  # 记录模型当前所在设备
+model = AutoModelForImageSegmentation.from_pretrained(
+    "./model/RMBG-2.0", trust_remote_code=True
+)
+torch.set_float32_matmul_precision("high")
+model.eval()
+model_device = "cpu"
+model.to(model_device)
 
 
 def get_model(device: DeviceType) -> AutoModelForImageSegmentation:
@@ -33,13 +38,6 @@ def get_model(device: DeviceType) -> AutoModelForImageSegmentation:
     获取（并缓存）RMBG-2.0模型，只加载一次，按需切换设备。
     """
     global model, model_device
-    if model is None:
-        model = AutoModelForImageSegmentation.from_pretrained(
-            "./model/RMBG-2.0", trust_remote_code=True
-        )
-        torch.set_float32_matmul_precision("high")
-        model.eval()
-        model_device = None  # 尚未分配设备
     # 如果设备不同则迁移
     if model_device != device:
         model.to(device)
