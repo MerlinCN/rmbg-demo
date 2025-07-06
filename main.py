@@ -18,11 +18,15 @@ from torchvision import transforms
 from transformers import AutoModelForImageSegmentation
 import numpy as np
 import time
+import dotenv
+import os
 
 # 类型别名定义
 DeviceType = Literal["cuda", "cpu"]
 ImageInputType = Union[Image.Image, np.ndarray, None]
 ProcessResultType = Tuple[Optional[Image.Image], str]
+
+dotenv.load_dotenv()
 
 model = AutoModelForImageSegmentation.from_pretrained(
     "./model/RMBG-2.0", trust_remote_code=True
@@ -313,9 +317,10 @@ def main() -> None:
     # Start server
     demo.launch(
         server_name="0.0.0.0",  # Listen on all network interfaces
-        server_port=7788,  # Server port
+        server_port=54213,  # Server port
         share=False,  # Generate public access link
         show_error=True,  # Show detailed error information
+        auth=("admin", os.getenv("PASSWORD")),
     )
 
 
